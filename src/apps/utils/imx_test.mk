@@ -23,7 +23,9 @@ imx_test:
 	 sudo cp -rf $(DESTDIR)/usr/include/alsa $(RFSDIR)/usr/include && \
 	 cd $(UTILSDIR)/imx_test && \
 	 mkdir -p $(DESTDIR)/opt/unit_tests && \
-	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -I$(RFSDIR)/usr/include -I$(DESTDIR)/usr/include -O2 -pipe -g" && \
+	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu -I$(RFSDIR)/usr/include/aarch64-linux-gnu -I$(RFSDIR)/usr/include -I$(DESTDIR)/usr/include -O2 -pipe -g" && \
+	 export CXX="$(CROSS_COMPILE)g++ --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu -I$(RFSDIR)/usr/include/aarch64-linux-gnu -I$(RFSDIR)/usr/include -I$(DESTDIR)/usr/include -L$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export LDFLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -L$(RFSDIR)/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/lib/aarch64-linux-gnu" && \
 	 V=0 VERBOSE='' SDKTARGETSYSROOT=$(DESTDIR) PLATFORM=$(PLATFORM) \
 	 $(MAKE) -j$(JOBS) && \
 	 $(MAKE) install DESTDIR=$(DESTDIR)/opt/unit_tests PLATFORM=$(PLATFORM) && \

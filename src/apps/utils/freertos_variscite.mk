@@ -95,6 +95,6 @@ freertos_variscite:
 	done ; \
 	if [ $${MACHINE:0:5} = imx93 ]; then \
 		cd $(DESTDIR)/usr/lib/firmware/ && \
-		ln -s cm_ethosu_apps_rpmsg.elf.release ethosu_firmware; \
+		ln -sf cm_ethosu_apps_rpmsg.elf.release ethosu_firmware; \
 	fi && \
 	$(call fbprint_d,"freertos_variscite")
