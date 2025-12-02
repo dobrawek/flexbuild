@@ -22,9 +22,11 @@ ethosu_driver_stack:
 	 mkdir -p build_$(DISTROTYPE)_$(ARCH)/dist && \
 	 cmake  -S $(MLDIR)/ethosu_driver_stack \
 		-B $(MLDIR)/ethosu_driver_stack/build_$(DISTROTYPE)_$(ARCH) \
+		-DCMAKE_C_COMPILER_WORKS=TRUE \
+		-DCMAKE_CXX_COMPILER_WORKS=TRUE \
 		-DCMAKE_C_FLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
 		-DCMAKE_CXX_FLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
-		-DCMAKE_EXE_LINKER_FLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+		-DCMAKE_EXE_LINKER_FLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -L$(RFSDIR)/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/lib/aarch64-linux-gnu" && \
 	 $(MAKE) -j$(JOBS) -C build_$(DISTROTYPE)_$(ARCH) && \
 	 cmake --install build_$(DISTROTYPE)_$(ARCH) --prefix /usr --strip && \
 	 NO_FETCH_BUILD=1 \
