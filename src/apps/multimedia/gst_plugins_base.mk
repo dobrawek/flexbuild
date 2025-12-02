@@ -64,7 +64,7 @@ gst_plugins_base:
 	 export GI_SCANNER_DISABLE_CACHE=1 && \
 	 meson setup build_$(DISTROTYPE)_$(ARCH) \
 		--cross-file meson.cross \
-		-Dc_args="-I$(DESTDIR)/usr/include -I$(DESTDIR)/usr/include/gstreamer-1.0" \
+		-Dc_args="-I$(DESTDIR)/usr/include -I$(DESTDIR)/usr/include/gstreamer-1.0 -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
 		-Dc_link_args="-L$(DESTDIR)/usr/lib -L$(DESTDIR)/usr/lib/gstreamer-1.0 \
 			       -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -lgbm -lEGL \
 			       -lgbm_viv -lgstbase-1.0 -lgstreamer-1.0 -lpthread -ldl" \

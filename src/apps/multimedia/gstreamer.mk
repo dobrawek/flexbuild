@@ -36,7 +36,7 @@ gstreamer:
 	 \
 	 meson setup build_$(DISTROTYPE)_$(ARCH) \
 		--cross-file meson.cross \
-		-Dc_args="--sysroot=$(RFSDIR) -I$(DESTDIR)/usr/local/include" \
+		-Dc_args="--sysroot=$(RFSDIR) -I$(DESTDIR)/usr/local/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
 		-Dc_link_args="-L$(DESTDIR)/usr/lib" \
 		--prefix=/usr --buildtype=release --strip \
 		-Dintrospection=disabled \

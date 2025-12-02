@@ -27,7 +27,7 @@ gst_plugins_good:
 	 fi && \
 	 meson setup build_$(DISTROTYPE)_$(ARCH) \
 		-Dc_args="-I$(DESTDIR)/usr/include/gstreamer-1.0 \
-			  -I$(DESTDIR)/usr/lib/gstreamer-1.0/include -I$(DESTDIR)/usr/include" \
+			  -I$(DESTDIR)/usr/lib/gstreamer-1.0/include -I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
 		-Dc_link_args="-L$(DESTDIR)/usr/lib \
 			-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -lgstnet-1.0 -lgstrtp-1.0 -lgstrtsp-1.0 \
 			-lgstaudio-1.0 -lgstvideo-1.0 -lgstallocators-1.0 -lgstpbutils-1.0 -lEGL -lgbm" \
