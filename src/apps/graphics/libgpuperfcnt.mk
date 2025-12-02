@@ -13,7 +13,7 @@ libgpuperfcnt:
 	 cd $(GRAPHICSDIR) && \
 	 if [ ! -d libgpuperfcnt ]; then \
 	     wget -q $(repo_libgpuperfcnt_bin_url) -O libgpuperfcnt.bin && \
-	     chmod +x libgpuperfcnt.bin && ./libgpuperfcnt.bin --auto-accept && \
+	     chmod +x libgpuperfcnt.bin && /bin/sh ./libgpuperfcnt.bin --auto-accept && \
 	     rm -f libgpuperfcnt.bin; \
 	 fi && \
 	 cp -Prf libgpuperfcnt/usr $(DESTDIR) && \

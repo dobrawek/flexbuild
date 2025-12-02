@@ -23,9 +23,10 @@ imx_alsa_plugin:
 	 aclocal && autoheader && \
 	 automake --foreign --copy --add-missing && \
 	 touch depcomp && autoconf && \
-	 ./configure --host=aarch64 CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" \
+	 ./configure --host=aarch64 CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
 	   --with-libtool-sysroot=$(RFSDIR) \
 	   --disable-silent-rules --disable-static --enable-swpdm \
-	   CFLAGS="-O2 -Wall -W -pipe -g -I$(DESTDIR)/usr/include" 1>/dev/null && \
+	   CFLAGS="-O2 -Wall -W -pipe -g -I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
+	   LDFLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" 1>/dev/null && \
 	 $(MAKE) install && \
 	 $(call fbprint_d,"imx_alsa_plugin")

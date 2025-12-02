@@ -74,8 +74,8 @@ ifeq ($(strip $(subst ",,$(CONFIG_WESTON))),y)
 		-Dbackend-wayland=false \
 		-Dimage-webp=false \
 		-Dbackend-x11=false \
-		-Dc_args="-I$(DESTDIR)/usr/include -I$(DESTDIR)/usr/local/include -I$(RFSDIR)/usr/include" \
-		-Dc_link_args="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/lib/aarch64-linux-gnu -lgbm" && \
+		-Dc_args="-I$(DESTDIR)/usr/include -I$(DESTDIR)/usr/local/include -I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
+		-Dc_link_args="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/lib/aarch64-linux-gnu -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu -lgbm" && \
 	 ninja install -j$(JOBS) -C build_$(DISTROTYPE)_$(ARCH) && \
 	 mkdir -p $(DESTDIR)/etc/systemd/system/sockets.target.wants && \
 	 mkdir -p $(DESTDIR)/etc/xdg/weston $(DESTDIR)/etc/systemd/system/graphical.target.wants $(DESTDIR)/etc/default && \

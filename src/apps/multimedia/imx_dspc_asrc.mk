@@ -13,11 +13,13 @@ imx_dspc_asrc:
 	 cd $(MMDIR) && \
 	 if [ ! -d imx_dspc_asrc ]; then \
 	     wget -q $(repo_imx_dspc_asrc_bin_url) -O imx_dspc_asrc.bin && \
-	     chmod +x imx_dspc_asrc.bin && ./imx_dspc_asrc.bin --auto-accept && \
+	     chmod +x imx_dspc_asrc.bin && /bin/sh ./imx_dspc_asrc.bin --auto-accept && \
 	     mv imx-dspc-asrc* imx_dspc_asrc && rm -f imx_dspc_asrc.bin; \
 	 fi && \
 	 cd imx_dspc_asrc && \
-	 ./configure CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" \
+	 ./configure CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
+	   CFLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
+	   LDFLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
 	   --enable-armv8 \
 	   --libdir=/usr/lib \
 	   --bindir=/unit_tests \

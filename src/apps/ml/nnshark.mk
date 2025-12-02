@@ -21,7 +21,9 @@ nnshark:
 	 cd $(MLDIR)/nnshark && \
 	 sed -i 's/--exclude=gtkdocize//' autogen.sh && \
 	 ./autogen.sh --noconfigure --prefix=/usr --host=aarch64-linux-gnu && \
-	 ./configure CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" \
+	 ./configure CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
+		CFLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
+		LDFLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
 	 	--host=aarch64-linux-gnu \
 		--disable-graphviz \
 		--disable-gtk-doc \

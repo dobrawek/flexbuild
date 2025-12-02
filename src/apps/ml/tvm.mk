@@ -25,12 +25,14 @@ tvm:
 	 fi && \
 	 sudo cp $(DESTDIR)/usr/lib/libtim-vx.so $(RFSDIR)/usr/lib && \
 	 cd $(MLDIR)/tvm && \
-	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" && \
-	 export CXX="$(CROSS_COMPILE)g++ --sysroot=$(RFSDIR)" && \
+	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export CXX="$(CROSS_COMPILE)g++ --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
 	 mkdir -p build_$(DISTROTYPE)_$(ARCH) && \
 	 cmake  -S $(MLDIR)/tvm \
 		-B $(MLDIR)/tvm/build_$(DISTROTYPE)_$(ARCH) \
-		-DCMAKE_CXX_FLAGS="-I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include" \
+		-DCMAKE_C_FLAGS="-I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
+		-DCMAKE_CXX_FLAGS="-I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
+		-DCMAKE_EXE_LINKER_FLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
 		-DCMAKE_STRIP=strip \
 		-DUSE_VSI_NPU=ON \
 		-DUSE_VSI_NPU_RUNTIME=ON && \

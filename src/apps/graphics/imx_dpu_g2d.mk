@@ -14,7 +14,7 @@ imx_dpu_g2d:
 	 cd $(GRAPHICSDIR) && \
 	 if [ ! -d $(GRAPHICSDIR)/imx_dpu_g2d ]; then \
 	     wget -q $(repo_imx_dpu_g2d_bin_url) -O imx_dpu_g2d.bin && \
-	     chmod +x imx_dpu_g2d.bin && ./imx_dpu_g2d.bin --auto-accept && \
+	     chmod +x imx_dpu_g2d.bin && /bin/sh ./imx_dpu_g2d.bin --auto-accept && \
 	     mv imx-dpu-g2d-* imx_dpu_g2d && rm -f imx_dpu_g2d.bin; \
 	 fi && \
 	 cd imx_dpu_g2d && \

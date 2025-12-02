@@ -14,11 +14,16 @@ ecc_example:
 	 $(call fbprint_b,"ecc_example") && \
 	 $(call repo-mngr,fetch,ecc_example,apps/security) && \
 	 cd $(SECDIR)/ecc_example && \
-	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" && \
+	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
 	 mkdir -p build_$(DISTROTYPE)_$(ARCH) $(DESTDIR)/usr/bin && \
 	 cmake  -S $(SECDIR)/ecc_example/ecc_example \
 		-B build_$(DISTROTYPE)_$(ARCH) \
-		-DCMAKE_BUILD_TYPE=release && \
+		-DCMAKE_BUILD_TYPE=release \
+		-DCMAKE_C_COMPILER_WORKS=TRUE \
+		-DCMAKE_CXX_COMPILER_WORKS=TRUE \
+		-DCMAKE_C_FLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
+		-DCMAKE_CXX_FLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
+		-DCMAKE_EXE_LINKER_FLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -B$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
 	 cmake --build build_$(DISTROTYPE)_$(ARCH) --target all && \
 	 cmake --install build_$(DISTROTYPE)_$(ARCH) --prefix /usr && \
 	 install -m 0755 build_$(DISTROTYPE)_$(ARCH)/ex_ecc $(DESTDIR)/usr/bin/ && \

@@ -16,7 +16,7 @@ imx_isp:
 	 cd $(MMDIR) && \
 	 if [ ! -d $(MMDIR)/imx_isp ]; then \
 	     wget -q $(repo_imx_isp_bin_url) -O imxisp.bin && \
-	     chmod +x imxisp.bin && ./imxisp.bin --auto-accept && \
+	     chmod +x imxisp.bin && /bin/sh ./imxisp.bin --auto-accept && \
 	     mv isp-imx-* imx_isp && rm -f imxisp.bin; \
 	 fi && \
 	 if [ ! -f $(DESTDIR)/usr/lib/libg2d.so ]; then \
@@ -39,8 +39,8 @@ imx_isp:
 	 sudo cp -Pf $(DESTDIR)/usr/lib/libg2d*.so* $(RFSDIR)/usr/lib && \
 	 sudo cp -rf $(DESTDIR)/usr/include/linux $(RFSDIR)/usr/include/ && \
 	 mkdir -p build_$(DISTROTYPE)_$(ARCH) && cd build_$(DISTROTYPE)_$(ARCH) && \
-	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" && \
-	 export CXX="$(CROSS_COMPILE)g++ --sysroot=$(RFSDIR)" && \
+	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export CXX="$(CROSS_COMPILE)g++ --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
 	 cmake .. -G "Unix Makefiles" \
 		-DBOOST_LIBRARYDIR=$(RFSDIR)/usr/lib/aarch64-linux-gnu \
 		-DBoost_INCLUDE_DIR=$(RFSDIR)/usr/include \
@@ -58,10 +58,11 @@ imx_isp:
 		-D3A_SRC_BUILD=0 \
 		-DIMX_G2D=ON \
 		-Wno-dev \
-		-DCMAKE_C_FLAGS="-I$(DESTDIR)/usr/include -I$(DESTDIR)/usr/include/libdrm \
+		-DCMAKE_C_FLAGS="-I$(DESTDIR)/usr/include -I$(DESTDIR)/usr/include/libdrm -I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu \
 			-I$(MMDIR)/imx_isp/utils3rd/3rd/jsoncpp/include -Wno-error=variadic-macros -Wno-error=pedantic" \
-		-DCMAKE_CXX_FLAGS="-I$(DESTDIR)/usr/include -I$(DESTDIR)/usr/include/libdrm \
-			-I$(MMDIR)/imx_isp/utils3rd/3rd/jsoncpp/include -Wno-error=variadic-macros -Wno-error=pedantic" && \
+		-DCMAKE_CXX_FLAGS="-I$(DESTDIR)/usr/include -I$(DESTDIR)/usr/include/libdrm -I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu \
+			-I$(MMDIR)/imx_isp/utils3rd/3rd/jsoncpp/include -Wno-error=variadic-macros -Wno-error=pedantic" \
+		-DCMAKE_EXE_LINKER_FLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
 	 $(MAKE) -j$(JOBS) && \
 	 install -d $(DESTDIR)/opt/imx8-isp/bin && \
 	 install -d $(DESTDIR)/usr/lib/systemd/system && \

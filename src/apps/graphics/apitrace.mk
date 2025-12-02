@@ -19,8 +19,8 @@ ifeq ($(CONFIG_APITRACE),y)
 	     git am $(FBDIR)/patch/apitrace/*.patch && touch .patchdone; \
 	 fi && \
 	 cp -f $(FBDIR)/src/system/pkgconfig/libproc2.pc $(DESTDIR)/usr/lib/pkgconfig && \
-	 export CC="$(CROSS_COMPILE)gcc -march=armv8-a+crc+crypto -mbranch-protection=standard --sysroot=$(RFSDIR)" && \
-	 export CXX="$(CROSS_COMPILE)g++ -march=armv8-a+crc+crypto -mbranch-protection=standard --sysroot=$(RFSDIR)" && \
+	 export CC="$(CROSS_COMPILE)gcc -march=armv8-a+crc+crypto -mbranch-protection=standard --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export CXX="$(CROSS_COMPILE)g++ -march=armv8-a+crc+crypto -mbranch-protection=standard --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
 	 export PKG_CONFIG_SYSROOT_DIR=$(RFSDIR) && \
 	 export PKG_CONFIG_PATH=$(RFSDIR)/usr/lib/aarch64-linux-gnu/pkgconfig:$(RFSDIR)/usr/share/pkgconfig:$(DESTDIR)/usr/lib/pkgconfig && \
 	 mkdir -p build_$(DISTROTYPE)_$(ARCH) && \
@@ -39,6 +39,9 @@ ifeq ($(CONFIG_APITRACE),y)
 		-DENABLE_X11=OFF \
 		-DVivante_INC_SEARCH_PATH=$(RFSDIR)/usr/include \
 		-DVivante_LIB_SEARCH_PATH=$(RFSDIR)/usr/lib \
+		-DCMAKE_C_FLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
+		-DCMAKE_CXX_FLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
+		-DCMAKE_EXE_LINKER_FLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
 		-DCMAKE_BUILD_TYPE=release && \
 	 VERBOSE=1 cmake --build $(GRAPHICSDIR)/apitrace/build_$(DISTROTYPE)_$(ARCH) --target install && \
 	 $(call fbprint_d,"apitrace")

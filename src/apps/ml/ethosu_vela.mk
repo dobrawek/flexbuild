@@ -16,8 +16,9 @@ ethosu_vela:
 	 $(call fbprint_b,"ethosu_vela") && \
 	 $(call repo-mngr,fetch,ethosu_vela,apps/ml) && \
 	 cd $(MLDIR)/ethosu_vela && \
-	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -I$(RFSDIR)/usr/include/python3.11" && \
-	 export LDFLAGS="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu -I$(RFSDIR)/usr/include/python3.11" && \
+	 export CFLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" && \
+	 export LDFLAGS="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
 	 mkdir -p $(MLDIR)/ethosu_vela/build/dist && \
 	 NO_FETCH_BUILD=1 ARCH=arm64 \
 	 STAGING_INCDIR=$(RFSDIR)/usr/include \

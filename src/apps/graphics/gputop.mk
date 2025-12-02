@@ -16,8 +16,17 @@ gputop:
 	 cd $(GRAPHICSDIR)/gputop && \
 	 mkdir -p build_$(DISTROTYPE)_$(ARCH) && \
 	 cd build_$(DISTROTYPE)_$(ARCH) && \
-	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" && \
+	 export ARCH=arm64 && \
+	 export CFLAGS="--sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu -I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" && \
+	 export CXXFLAGS="--sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu -I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu -L$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export LDFLAGS="--sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/lib" && \
+	 export OECORE_TARGET_SYSROOT=$(RFSDIR) && \
 	 cmake -DCMAKE_TOOLCHAIN_FILE=$(GRAPHICSDIR)/gputop/cmake/OEToolchainConfig.cmake \
+	       -DCMAKE_C_COMPILER="$(CROSS_COMPILE)gcc" \
+	       -DCMAKE_CXX_COMPILER="$(CROSS_COMPILE)g++" \
+	       -DCMAKE_SYSROOT=$(RFSDIR) \
+	       -DCMAKE_C_COMPILER_WORKS=TRUE \
+	       -DCMAKE_CXX_COMPILER_WORKS=TRUE \
 	       -DGPUPERFCNT_INCLUDE_PATH=$(DESTDIR)/usr/include \
 	       -DGPUPERFCNT_LIB_PATH=$(DESTDIR)/usr/lib .. && \
 	 $(MAKE) -j$(JOBS) && $(MAKE) install && \

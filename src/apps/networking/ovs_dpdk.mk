@@ -19,8 +19,9 @@ ovs_dpdk:
          fi && \
 	 \
 	 cd $(NETDIR)/ovs_dpdk && \
-	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" && \
-	 export LDFLAGS="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/usr/lib -L$(RFSDIR)/lib/aarch64-linux-gnu" && \
+	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export CFLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" && \
+	 export LDFLAGS="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/usr/lib -L$(RFSDIR)/lib/aarch64-linux-gnu -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
 	 export LIBS="$(shell PKG_CONFIG_PATH=$(DESTDIR)/usr/lib/pkgconfig $(CROSS)pkg-config --libs libdpdk)" && \
 	 ./boot.sh && \
 	 ./configure --prefix=/usr \

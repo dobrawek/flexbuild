@@ -12,7 +12,7 @@ basler_camera:
 	 cd $(MMDIR) && \
 	 if [ ! -d $(MMDIR)/basler_camera ]; then \
 	     wget -q $(repo_basler_camera_bin_url) -O basler_camera.bin && \
-	     chmod +x basler_camera.bin && ./basler_camera.bin --auto-accept && \
+	     chmod +x basler_camera.bin && /bin/sh ./basler_camera.bin --auto-accept && \
 	     mv basler-camera-* basler_camera && rm -f basler_camera.bin; \
 	 fi && \
 	 cd basler_camera && \

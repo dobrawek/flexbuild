@@ -24,14 +24,19 @@ tflite:
 	     $(call fbprint_n,"Skip...") && exit ; \
 	 fi && \
 	 [ ! -f mobilenet.tgz ] && wget -q $(model-mobv1) -O mobilenet.tgz && tar xf mobilenet.tgz || true && \
-	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" && \
-	 export CXX="$(CROSS_COMPILE)g++ --sysroot=$(RFSDIR)" && \
+	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export CXX="$(CROSS_COMPILE)g++ --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export CFLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" && \
+	 export CXXFLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" && \
+	 export LDFLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
 	 mkdir -p build_$(DISTROTYPE)_$(ARCH) && \
 	 cmake  -S tensorflow/lite \
 		-B build_$(DISTROTYPE)_$(ARCH) \
 		-DCMAKE_BUILD_TYPE=release \
 		-DCMAKE_SYSTEM_NAME=Linux \
 		-DCMAKE_SYSTEM_PROCESSOR=aarch64 \
+		-DCMAKE_C_FLAGS="-I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
+		-DCMAKE_CXX_FLAGS="-I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
 		-DTFLITE_HOST_TOOLS_DIR=/usr/bin \
 		-DFETCHCONTENT_FULLY_DISCONNECTED=OFF \
 		-DTFLITE_EVAL_TOOLS=on \

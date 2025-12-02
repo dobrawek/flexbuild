@@ -48,6 +48,10 @@ gst_plugins_base:
 	 if  [ ! -f $(DESTDIR)/usr/include/alsa/asoundlib.h ]; then \
 	     bld alsa_lib -r $(DISTROTYPE):$(DISTROVARIANT); \
 	 fi && \
+	 if [ ! -f $(RFSDIR)/usr/include/orc-0.4/orc/orconce.h ] || \
+	    ! grep -q ORC_ONCE_INIT $(RFSDIR)/usr/include/orc-0.4/orc/orconce.h 2>/dev/null; then \
+	     bld orc -r $(DISTROTYPE):$(DISTROVARIANT); \
+	 fi && \
 	 if [ ! -f $(RFSDIR)/usr/include/gstreamer-1.0/gst/gstbytearrayinterface.h ]; then \
 	     sudo cp -Prf $(DESTDIR)/usr/include/gstreamer-1.0 $(RFSDIR)/usr/include; \
 	 fi && \
@@ -95,6 +99,7 @@ gst_plugins_base:
 		-Dvorbis=enabled \
 		-Dx11=enabled \
 		-Dxvideo=enabled \
-		-Dxshm=enabled && \
+		-Dxshm=enabled \
+		-Dtests=disabled && \
 	 ninja -j $(JOBS) -C build_$(DISTROTYPE)_$(ARCH) install && \
 	 $(call fbprint_d,"gst_plugins_base")

@@ -27,7 +27,9 @@ ifeq ($(CONFIG_OPTEE),y)
 	 kernelrelease=`cat $$kerneloutdir/include/config/kernel.release` && \
 	 \
 	 cd $(SECDIR)/secure_obj && \
-	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" && \
+	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export CFLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" && \
+	 export LDFLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
 	 export DESTDIR=${DESTDIR}/usr/local && \
 	 export TA_DEV_KIT_DIR=$(SECDIR)/optee_os/out/arm-plat-ls/export-ta_arm64 && \
 	 export OPTEE_CLIENT_EXPORT=$(DESTDIR)/usr && \

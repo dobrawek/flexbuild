@@ -22,8 +22,8 @@ ifeq ($(strip $(subst ",,$(CONFIG_WAYLAND))),y)
 	 meson setup build_$(DISTROTYPE)_$(ARCH) \
 		-Ddocumentation=false \
 		-Dtests=false \
-		-Dc_args="-I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include" \
-		-Dc_link_args="-L$(DESTDIR)/usr/local/lib -L$(RFSDIR)/lib/aarch64-linux-gnu" \
+		-Dc_args="-I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
+		-Dc_link_args="-L$(DESTDIR)/usr/local/lib -L$(RFSDIR)/lib/aarch64-linux-gnu -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
 		--prefix=/usr \
 		--buildtype=release \
 		--cross-file=meson.cross && \

@@ -16,10 +16,16 @@ openthread_iwxxx_spi:
 	if [ ! -f .patchdone ]; then \
 				git apply $(FBDIR)/patch/openthread_iwxxx_spi/*.patch && touch .patchdone; \
 	fi && \
-	export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" && \
-	export CXX="$(CROSS_COMPILE)g++ --sysroot=$(RFSDIR)" && \
+	export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu -I$(RFSDIR)/usr/include/aarch64-linux-gnu -I$(RFSDIR)/usr/include" && \
+	export CXX="$(CROSS_COMPILE)g++ --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu -I$(RFSDIR)/usr/include/aarch64-linux-gnu -I$(RFSDIR)/usr/include -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	export LDFLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu $(RFSDIR)/usr/lib/aarch64-linux-gnu/libstdc++.so.6" && \
+	rm -rf $$SOURCE/build_$(DISTROTYPE)_$(ARCH) && \
 	OT_OPT=" \
 			-GNinja \
+			-DCMAKE_C_COMPILER_WORKS=TRUE \
+			-DCMAKE_CXX_COMPILER_WORKS=TRUE \
+			-DCMAKE_C_BYTE_ORDER=LITTLE_ENDIAN \
+			-DCMAKE_CXX_BYTE_ORDER=LITTLE_ENDIAN \
 			-DOT_SLAAC=ON \
 			-DOT_ANYCAST_LOCATOR=ON \
 			-DOT_BORDER_AGENT=ON \

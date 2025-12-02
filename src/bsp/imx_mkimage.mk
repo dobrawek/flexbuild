@@ -20,26 +20,26 @@ define imx_mkimage_target
     \
     if [ ! -d $(BSPDIR)/firmware-imx ]; then \
 	cd $(BSPDIR) && wget -q $(repo_firmware_imx_bin_url) -O firmware_imx.bin && chmod +x firmware_imx.bin && \
-	./firmware_imx.bin --auto-accept && mv firmware-imx* firmware-imx && rm -f firmware_imx.bin; \
+	/bin/sh ./firmware_imx.bin --auto-accept && mv firmware-imx* firmware-imx && rm -f firmware_imx.bin; \
     fi && \
     if [ ! -d $(BSPDIR)/imx-seco/firmware/seco ]; then \
 	cd $(BSPDIR) && wget -q $(repo_seco_bin_url) -O imx-seco.bin && chmod +x imx-seco.bin && \
-	./imx-seco.bin --auto-accept && mv `basename -s .bin $(repo_seco_bin_url)` imx-seco && rm -f imx-seco.bin; \
+	/bin/sh ./imx-seco.bin --auto-accept && mv `basename -s .bin $(repo_seco_bin_url)` imx-seco && rm -f imx-seco.bin; \
     fi && \
     if [ ! -d $(BSPDIR)/oei/build/ ]; then \
 	bld -m $(MACHINE) oei; \
     fi && \
     if [ ! -d $(BSPDIR)/fw_ele ]; then \
 	cd $(BSPDIR) && wget -q $(repo_fw_ele_bin_url) -O fw_ele.bin && chmod +x fw_ele.bin && \
-	./fw_ele.bin --auto-accept && mv `basename -s .bin $(repo_fw_ele_bin_url)` fw_ele && rm -f fw_ele.bin; \
+	/bin/sh ./fw_ele.bin --auto-accept && mv `basename -s .bin $(repo_fw_ele_bin_url)` fw_ele && rm -f fw_ele.bin; \
     fi && \
     if [ ! -d $(BSPDIR)/fw_upower ]; then \
 	cd $(BSPDIR) && wget -q $(repo_fw_upower_bin_url) -O fw_upower.bin && chmod +x fw_upower.bin && \
-	./fw_upower.bin --auto-accept && mv `basename -s .bin $(repo_fw_upower_bin_url)` fw_upower && rm -f fw_upower.bin; \
+	/bin/sh ./fw_upower.bin --auto-accept && mv `basename -s .bin $(repo_fw_upower_bin_url)` fw_upower && rm -f fw_upower.bin; \
     fi && \
     if [ ! -f $(BSPDIR)/imx-scfw/mx8qx-mek-scfw-tcm.bin ]; then \
 	wget -q $(repo_scfw_bin_url) -O imx-scfw.bin && chmod +x imx-scfw.bin && \
-	./imx-scfw.bin --auto-accept && mv `basename -s .bin $(repo_scfw_bin_url)` imx-scfw && rm -f imx-scfw.bin; \
+	/bin/sh ./imx-scfw.bin --auto-accept && mv `basename -s .bin $(repo_scfw_bin_url)` imx-scfw && rm -f imx-scfw.bin; \
     fi && \
     if [ ! -d $(BSPDIR)/imx_sc_firmware/ ]; then \
 	bld imx_sc_firmware -r $(DISTROTYPE):$(DISTROVARIANT) -a $(DESTARCH); \

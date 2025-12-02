@@ -21,12 +21,15 @@ tflite_vx_delegate:
 	     bld tim_vx -r $(DISTROTYPE):$(DISTROVARIANT) -a $(DESTARCH); \
 	 fi && \
 	 cd $(MLDIR)/tflite_vx_delegate && \
-	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" && \
-	 export CXX="$(CROSS_COMPILE)g++ --sysroot=$(RFSDIR)" && \
-	 export CXXFLAGS="-O2 -pipe -g -fPIC -feliminate-unused-debug-types -I$(RFSDIR)//usr/include/python3.11" && \
+	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export CXX="$(CROSS_COMPILE)g++ --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export CXXFLAGS="-O2 -pipe -g -fPIC -feliminate-unused-debug-types -I$(RFSDIR)/usr/include/python3.11 -I$(RFSDIR)/usr/include/aarch64-linux-gnu" && \
 	 mkdir -p build_$(DISTROTYPE)_$(ARCH) && \
 	 cmake  -S $(MLDIR)/tflite_vx_delegate \
 		-B $(MLDIR)/tflite_vx_delegate/build_$(DISTROTYPE)_$(ARCH) \
+		-DCMAKE_C_FLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
+		-DCMAKE_CXX_FLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
+		-DCMAKE_EXE_LINKER_FLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
 		-DFETCHCONTENT_FULLY_DISCONNECTED=OFF \
 		-DTIM_VX_INSTALL=$(DESTDIR)/usr \
 		-DFETCHCONTENT_SOURCE_DIR_TENSORFLOW=$(MLDIR)/tflite \

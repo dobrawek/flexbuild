@@ -20,19 +20,27 @@ gst_plugins_good:
 	 if [ ! -f $(DESTDIR)/usr/lib/gstreamer-1.0/libgstvolume.so ]; then \
 	     bld gst_plugins_base -r $(DISTROTYPE):$(DISTROVARIANT) -a $(DESTARCH); \
 	 fi && \
+	 if [ ! -f $(DESTDIR)/usr/lib/libgstreamer-1.0.so ]; then \
+	     bld gstreamer -r $(DISTROTYPE):$(DISTROVARIANT) -a $(DESTARCH); \
+	 fi && \
 	 sudo cp -fr $(DESTDIR)/usr/include/gstreamer-1.0 $(RFSDIR)/usr/include && \
-	 sudo cp -fa $(DESTDIR)/usr/lib/libgsttag-1.0.so* $(RFSDIR)/usr/lib && \
+	 sudo cp -fa $(DESTDIR)/usr/lib/libgst*.so* $(RFSDIR)/usr/lib && \
+	 sudo cp -fa $(DESTDIR)/usr/lib/libgst*.so* $(RFSDIR)/usr/lib/aarch64-linux-gnu/ && \
+	 sudo cp -fa $(DESTDIR)/usr/lib/gstreamer-1.0/*.so $(RFSDIR)/usr/lib/aarch64-linux-gnu/gstreamer-1.0/ 2>/dev/null || true && \
+	 sudo cp -fa $(DESTDIR)/usr/lib/pkgconfig/gstreamer*.pc $(RFSDIR)/usr/lib/aarch64-linux-gnu/pkgconfig/ 2>/dev/null || true && \
 	 if [ ! -f $(DESTDIR)/usr/lib/libdrm.so ]; then \
 	     bld libdrm -r $(DISTROTYPE):$(DISTROVARIANT) -a $(DESTARCH); \
 	 fi && \
 	 meson setup build_$(DISTROTYPE)_$(ARCH) \
 		-Dc_args="-I$(DESTDIR)/usr/include/gstreamer-1.0 \
 			  -I$(DESTDIR)/usr/lib/gstreamer-1.0/include -I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
-		-Dc_link_args="-L$(DESTDIR)/usr/lib \
-			-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -lgstnet-1.0 -lgstrtp-1.0 -lgstrtsp-1.0 \
+		-Dc_link_args="-L$(DESTDIR)/usr/lib -Wl,-rpath-link,$(DESTDIR)/usr/lib \
+			-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu \
+			-lgstnet-1.0 -lgstrtp-1.0 -lgstrtsp-1.0 \
 			-lgstaudio-1.0 -lgstvideo-1.0 -lgstallocators-1.0 -lgstpbutils-1.0 -lEGL -lgbm" \
-		-Dcpp_link_args="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -lgstnet-1.0 \
-			-lgstrtp-1.0 -lgstrtsp-1.0 -lgstaudio-1.0 -lgstvideo-1.0 -lgstallocators-1.0 \
+		-Dcpp_link_args="-L$(DESTDIR)/usr/lib -Wl,-rpath-link,$(DESTDIR)/usr/lib \
+			-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu \
+			-lgstnet-1.0 -lgstrtp-1.0 -lgstrtsp-1.0 -lgstaudio-1.0 -lgstvideo-1.0 -lgstallocators-1.0 \
 			-lgstpbutils-1.0 -lEGL -lgbm" \
 		--prefix=/usr --buildtype=release \
 		--cross-file meson.cross \
@@ -68,6 +76,7 @@ gst_plugins_good:
 		-Dximagesrc-xdamage=enabled \
 		\
 		-Dexamples=disabled \
+		-Dtests=disabled \
 		-Dnls=enabled \
 		-Ddoc=disabled \
 		-Daalib=disabled \

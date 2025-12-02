@@ -14,8 +14,9 @@ imx_vpuwrap:
 	     bld imx_vpu_hantro -r $(DISTROTYPE):$(DISTROVARIANT); \
 	 fi && \
 	 cd $(MMDIR)/imx_vpuwrap && \
-	 export CFLAGS="-I$(DESTDIR)/usr/include -I$(DESTDIR)/usr/include/hantro_dec -I$(DESTDIR)/usr/include/hantro_enc" && \
-	 export LDFLAGS="-L$(DESTDIR)/usr/lib -Wl,-O2" && \
+	 export CC="aarch64-linux-gnu-gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export CFLAGS="-I$(DESTDIR)/usr/include -I$(DESTDIR)/usr/include/hantro_dec -I$(DESTDIR)/usr/include/hantro_enc -I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" && \
+	 export LDFLAGS="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -B$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-O2" && \
 	 if [ ! -f /usr/bin/libtool ]; then sudo ln -s libtoolize /usr/bin/libtool; fi && \
 	 ./autogen.sh --prefix=/usr --host=aarch64-linux-gnu --with-sysroot=$(RFSDIR) 1>/dev/null && \
 	 sed -e 's/^am__append_3/#am__append_3/' -e 's/^am__append_5/#am__append_5/' \
@@ -25,7 +26,7 @@ imx_vpuwrap:
 	 if [ ! -f $(DESTDIR)/usr/include/hantro_VC8000E_enc/hevcencapi.h ]; then \
 	     bld imx_vpu_hantro_vc -r $(DISTROTYPE):$(DISTROVARIANT) -a $(DESTARCH); \
 	 fi && \
-	 $(MAKE) DEST_DIR=$(DESTDIR) SDKTARGETSYSROOT=$(DESTDIR) CC=aarch64-linux-gnu-gcc && \
+	 $(MAKE) DEST_DIR=$(DESTDIR) SDKTARGETSYSROOT=$(DESTDIR) && \
 	 $(MAKE) DEST_DIR=$(DESTDIR) SDKTARGETSYSROOT=$(DESTDIR) install && \
 	 echo installed examples in $(DESTDIR)/usr/share/imx-mm/video-codec/examples && \
 	 $(call fbprint_d,"imx_vpuwrap")

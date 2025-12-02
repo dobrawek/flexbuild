@@ -30,7 +30,11 @@ imx_vpu_hantro_daemon:
 	 sed -e 's|HANTRO_VC8000E_LIB_DIR =.*|HANTRO_VC8000E_LIB_DIR = $(DESTDIR)/usr/lib|' \
 	     -e 's|HANTRO_G1G2_LIB_DIR =.*|HANTRO_G1G2_LIB_DIR = $(DESTDIR)/usr/lib|' \
 	     -e 's|HANTRO_H1_LIB_DIR =.*|HANTRO_H1_LIB_DIR = $(DESTDIR)/usr/lib|' \
-	     -e 's|CTRLSW_HDRPATH =.*|CTRLSW_HDRPATH = $(DESTDIR)/usr/include|' -i Makefile && \
+	     -e 's|CTRLSW_HDRPATH =.*|CTRLSW_HDRPATH = $(DESTDIR)/usr/include|' \
+	     -e 's|CC = \$$(CROSS_COMPILE)gcc --sysroot=\$$(SDKTARGETSYSROOT)|CC = $$(CROSS_COMPILE)gcc --sysroot=$$(SDKTARGETSYSROOT) -B$$(SDKTARGETSYSROOT)/usr/lib/aarch64-linux-gnu|' -i Makefile && \
+	 sed -i '/^CFLAGS = /s|$$| -I$$(SDKTARGETSYSROOT)/usr/include/aarch64-linux-gnu -I$$(SDKTARGETSYSROOT)/usr/include|' v4l2_vsi_daemon/Makefile && \
+	 sed -i 's|^LD_FLAGS = -lpthread -lm|LD_FLAGS = -L$$(SDKTARGETSYSROOT)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$$(SDKTARGETSYSROOT)/usr/lib/aarch64-linux-gnu|' v4l2_vsi_daemon/Makefile && \
+	 sed -i 's|\$$(CC) -o \$$(OUT_FILE) \$$(OBJECTS) \$$(LD_FLAGS)|$$(CC) -o $$(OUT_FILE) $$(OBJECTS) $$(LD_FLAGS) -lpthread -lm|' v4l2_vsi_daemon/Makefile && \
 	 for socplat in $(SOCLIST); do \
 	     $(MAKE) clean && \
 	     $(MAKE) SDKTARGETSYSROOT=$(RFSDIR) DEST_DIR=$(DESTDIR) PLATFORM=$$socplat && \

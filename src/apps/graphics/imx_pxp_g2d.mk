@@ -13,9 +13,10 @@ imx_pxp_g2d:
 	 if [ ! -f $(DESTDIR)/usr/include/linux/pxp_device.h ]; then \
 	     bld linux-headers -r $(DISTROTYPE):$(DISTROVARIANT) -a $(DESTARCH); \
 	 fi && \
-	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" && \
+	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export LDFLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/lib" && \
 	 cd $(GRAPHICSDIR)/imx_pxp_g2d && \
 	 $(MAKE) clean && \
-	 $(MAKE) -j$(JOBS) PLATFORM=IMX93 INCLUDE='-I$(DESTDIR)/usr/include' DEST_DIR=$(DESTDIR) && \
+	 $(MAKE) -j$(JOBS) PLATFORM=IMX93 INCLUDE='-I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu' DEST_DIR=$(DESTDIR) && \
 	 $(MAKE) -j$(JOBS)  DEST_DIR=$(DESTDIR) install && \
 	 $(call fbprint_d,"imx_pxp_g2d")

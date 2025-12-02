@@ -30,11 +30,12 @@ cheese:
 	 sudo rm -f $(RFSDIR)/usr/lib/aarch64-linux-gnu/libgstallocators-1.0.so.0 && \
 	 sudo cp -rf $(DESTDIR)/usr/include/cogl $(RFSDIR)/usr/include && \
 	 \
+	 export GLIB_COMPILE_SCHEMAS=/usr/bin/glib-compile-schemas && \
 	 meson setup build_$(DISTROTYPE)_$(ARCH) \
 		-Dc_args="-I$(DESTDIR)/usr/include/gstreamer-1.0 -I$(DESTDIR)/usr/include \
-			  -I$(DESTDIR)/usr/include/clutter-gst-3.0 -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
-		-Dc_link_args="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -lgstbase-1.0 -lclutter-gst-3.0" \
-		-Dcpp_link_args="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -lgstbase-1.0 -lclutter-gst-3.0" \
+			  -I$(DESTDIR)/usr/include/clutter-gst-3.0 -I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
+		-Dc_link_args="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu -lgstbase-1.0 -lclutter-gst-3.0" \
+		-Dcpp_link_args="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu -lgstbase-1.0 -lclutter-gst-3.0" \
 		--prefix=/usr --buildtype=release \
 		--cross-file meson.cross \
 		--strip \

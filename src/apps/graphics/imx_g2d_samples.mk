@@ -32,11 +32,11 @@ imx_g2d_samples:
 	 fi && \
 	 cd $(GRAPHICSDIR)/imx_g2d_samples && \
 	 sudo cp $(DESTDIR)/usr/lib/{libOpenCL.so*,libSPIRV_viv.so*} $(RFSDIR)/usr/lib && \
-	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" && \
+	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
 	 export BUILD_IMPLEMENTATION=$(BUILD_IMPLEMENTATION) && \
 	 export SDKTARGETSYSROOT=$(RFSDIR) && \
-	 export CFLAGS="-I$(DESTDIR)/usr/include" && \
-	 export LDFLAGS="-L$(DESTDIR)/usr/lib" && \
+	 export CFLAGS="-I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" && \
+	 export LDFLAGS="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/lib" && \
 	 $(MAKE) clean && \
 	 $(MAKE) -j$(JOBS) && \
 	 $(MAKE) -j$(JOBS) install DESTDIR=$(DESTDIR) && \

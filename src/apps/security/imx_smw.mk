@@ -15,11 +15,13 @@ ifeq ($(CONFIG_SMW),y)
 	     CONFIG_OPTEE=y bld optee_client -r $(DISTROTYPE):$(DISTROVARIANT) -a $(DESTARCH); \
 	 fi && \
 	 cd $(SECDIR)/imx_smw && \
-	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" && \
+	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
 	 mkdir -p build_$(DISTROTYPE)_$(ARCH) && \
 	 cmake  -S $(SECDIR)/imx_smw \
 		-B build_$(DISTROTYPE)_$(ARCH) \
 		-DCMAKE_BUILD_TYPE=release \
+		-DCMAKE_C_FLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
+		-DCMAKE_EXE_LINKER_FLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
 		-DTA_DEV_KIT_ROOT=$(DESTDIR)/usr/include/optee/export-user_ta \
 		-DTEEC_ROOT=$(RFSDIR) \
 		-DJSONC_ROOT=$(RFSDIR)/usr/lib/aarch64-linux-gnu \

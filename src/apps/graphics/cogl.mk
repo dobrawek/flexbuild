@@ -20,16 +20,22 @@ cogl:
 	    git am $(FBDIR)/patch/cogl/*.patch && touch .patchdone; \
 	 fi && \
 	 export CROSS=$(CROSS_COMPILE) && \
-	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)  \
+	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) \
+		 -B$(RFSDIR)/usr/lib/aarch64-linux-gnu \
 		 -march=armv8-a+crc+crypto -mbranch-protection=standard -O2 \
 		 -fstack-protector-strong -D_FORTIFY_SOURCE=2 -Wformat \
 		 -Wformat-security -Werror=format-security -Wno-error=maybe-uninitialized" && \
-	 export CFLAGS="-I$(DESTDIR)/usr/include/libdrm -I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include" && \
-	 export LDFLAGS="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export CPP="$(CROSS_COMPILE)gcc -E --sysroot=$(RFSDIR)" && \
+	 export CFLAGS="-I$(DESTDIR)/usr/include/libdrm -I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" && \
+	 export CPPFLAGS="-I$(DESTDIR)/usr/include/libdrm -I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" && \
+	 export LDFLAGS="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -L$(RFSDIR)/lib \
+		 -B$(RFSDIR)/usr/lib/aarch64-linux-gnu \
+		 -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu \
+		 -Wl,-rpath-link,$(RFSDIR)/lib" && \
 	 sudo cp $(DESTDIR)/usr/lib/{libVSC.so,libgbm_viv.so,libGLESv2.so*} $(RFSDIR)/usr/lib && \
 	 \
 	 ./autogen.sh --prefix=/usr --host=aarch64-linux-gnu && \
-	 ./configure CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" \
+	 ./configure CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
 	 	--host=aarch64-linux-gnu \
 		--prefix=/usr \
 		--disable-silent-rules \

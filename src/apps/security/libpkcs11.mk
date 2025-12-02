@@ -13,11 +13,14 @@ libpkcs11:
 	 fi && \
 	 cd $(SECDIR)/libpkcs11 && \
 	 sed -e 's/^CC/#CC/' -e 's/^LD/#LD/' -e 's/s -Werror/s/' -i flags.mk && \
+	 echo 'CFLAGS += -I$$(SDKTARGETSYSROOT)/usr/include/aarch64-linux-gnu -I$$(SDKTARGETSYSROOT)/usr/include' >> flags.mk && \
 	 sed -i 's/-g -Iinclude/-g -fcommon -Iinclude/' Makefile && \
-	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" && \
-	 export LDFLAGS="-L$(RFSDIR)/usr/lib -L$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 sed -i 's|-I\$$(OPENSSL)/include/ -L\$$(OPENSSL)/|-I$$(SDKTARGETSYSROOT)/usr/include/aarch64-linux-gnu -I$$(SDKTARGETSYSROOT)/usr/include -I$$(OPENSSL)/include/ -L$$(SDKTARGETSYSROOT)/usr/lib/aarch64-linux-gnu -L$$(OPENSSL)/|g' Makefile && \
+	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export CFLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" && \
+	 export LDFLAGS="-L$(RFSDIR)/usr/lib -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
 	 $(MAKE) clean && \
-	 $(MAKE) all OPENSSL_PATH=$(SECDIR)/openssl \
+	 $(MAKE) all SDKTARGETSYSROOT=$(RFSDIR) OPENSSL_PATH=$(SECDIR)/openssl \
 	 EXPORT_DIR=$(DESTDIR)/usr/local CURDIR=$(SECDIR)/libpkcs11 \
 	 SECURE_OBJ_PATH=$(SECDIR)/secure_obj/securekey_lib && \
 	 mkdir -p $(DESTDIR)/usr/local/bin && \

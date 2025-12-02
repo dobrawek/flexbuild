@@ -14,11 +14,13 @@ imx_codec:
 	 cd $(MMDIR) && \
 	 if [ ! -d imx_codec ]; then \
 	     wget -q $(repo_imx_codec_bin_url) -O imx_codec.bin && \
-	     chmod +x imx_codec.bin && ./imx_codec.bin --auto-accept && \
+	     chmod +x imx_codec.bin && /bin/sh ./imx_codec.bin --auto-accept && \
 	     mv imx-codec* imx_codec && rm -f imx_codec.bin; \
 	 fi && \
 	 cd imx_codec && \
-	 ./configure CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" \
+	 ./configure CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
+	   CFLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
+	   LDFLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
 	   --enable-armv8 \
 	   --disable-static \
 	   --disable-vpu \

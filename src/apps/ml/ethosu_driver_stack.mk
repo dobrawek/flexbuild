@@ -17,11 +17,14 @@ ethosu_driver_stack:
 	 $(call fbprint_b,"ethosu_driver_stack") && \
 	 $(call repo-mngr,fetch,ethosu_driver_stack,apps/ml) && \
 	 cd $(MLDIR)/ethosu_driver_stack && \
-	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" && \
-	 export CXX="$(CROSS_COMPILE)g++ --sysroot=$(RFSDIR)" && \
+	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export CXX="$(CROSS_COMPILE)g++ --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
 	 mkdir -p build_$(DISTROTYPE)_$(ARCH)/dist && \
 	 cmake  -S $(MLDIR)/ethosu_driver_stack \
-		-B $(MLDIR)/ethosu_driver_stack/build_$(DISTROTYPE)_$(ARCH) && \
+		-B $(MLDIR)/ethosu_driver_stack/build_$(DISTROTYPE)_$(ARCH) \
+		-DCMAKE_C_FLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
+		-DCMAKE_CXX_FLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
+		-DCMAKE_EXE_LINKER_FLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
 	 $(MAKE) -j$(JOBS) -C build_$(DISTROTYPE)_$(ARCH) && \
 	 cmake --install build_$(DISTROTYPE)_$(ARCH) --prefix /usr --strip && \
 	 NO_FETCH_BUILD=1 \

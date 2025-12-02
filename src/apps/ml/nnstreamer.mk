@@ -37,15 +37,15 @@ nnstreamer:
 	     bld flatbuffers -r $(DISTROTYPE):$(DISTROVARIANT) -a $(DESTARCH); \
 	 fi && \
 	 \
-	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -march=armv8-a+crc+crypto" && \
-	 export CXX="$(CROSS_COMPILE)g++ --sysroot=$(RFSDIR) -march=armv8-a+crc+crypto" && \
+	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -march=armv8-a+crc+crypto -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export CXX="$(CROSS_COMPILE)g++ --sysroot=$(RFSDIR) -march=armv8-a+crc+crypto -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
 	 export CXXFLAGS="-O2 -pipe -g -fPIC -feliminate-unused-debug-types -fcanon-prefix-map" && \
 	 meson setup build_$(DISTROTYPE)_$(ARCH) \
 		--cross-file meson.cross \
 		--prefix=/usr --buildtype=release \
 		--strip \
-		-Dc_args="-I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include" \
-		-Dcpp_args="-I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include -I$(MLDIR)/tvm/3rdparty/dmlc-core/include \
+		-Dc_args="-I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
+		-Dcpp_args="-I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu -I$(MLDIR)/tvm/3rdparty/dmlc-core/include \
 			    -I$(MLDIR)/tflite/build_debian_arm64/abseil-cpp -I$(MLDIR)/tflite \
 			    -Wno-error=comment -Wno-sign-compare -Wno-error=unused-parameter -Wno-error=redundant-decls \
 			    -I$(MLDIR)/tflite/third_party/xla/third_party/tsl \
@@ -55,8 +55,8 @@ nnstreamer:
 			    -I$(MLDIR)/tflite/build_debian_arm64/gemmlowp \
 			    -I$(MLDIR)/tflite/tensorflow/lite/toco \
 			    -I$(MLDIR)/nnstreamer/third_party/xla/third_party/tsl" \
-		-Dc_link_args="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
-		-Dcpp_link_args="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
+		-Dc_link_args="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
+		-Dcpp_link_args="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
 		-Denable-float16=true \
 		-Denable-test=true \
 		-Dinstall-test=true \

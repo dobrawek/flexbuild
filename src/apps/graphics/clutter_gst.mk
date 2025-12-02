@@ -35,17 +35,31 @@ clutter_gst:
 	    git am $(FBDIR)/patch/clutter_gst/*.patch && touch .patchdone; \
 	 fi && \
 	 sed -i 's/noinst_PROGRAMS/bin_PROGRAMS/' examples/Makefile.am && \
+	 for la in $(DESTDIR)/usr/lib/*.la; do \
+	     sed -i "s|libdir='/usr/lib'|libdir='$(DESTDIR)/usr/lib'|g" $$la 2>/dev/null || true; \
+	     sed -i "s| /usr/lib/| $(DESTDIR)/usr/lib/|g" $$la 2>/dev/null || true; \
+	 done && \
+	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export CPP="$(CROSS_COMPILE)gcc -E --sysroot=$(RFSDIR)" && \
 	 export CFLAGS="-I$(DESTDIR)/usr/include -I$(DESTDIR)/usr/include/gstreamer-1.0 \
-			-I$(DESTDIR)/usr/include/clutter-1.0 -I$(RFSDIR)/usr/include" && \
+			-I$(DESTDIR)/usr/include/clutter-1.0 -I$(RFSDIR)/usr/include \
+			-I$(RFSDIR)/usr/include/aarch64-linux-gnu" && \
+	 export CPPFLAGS="-I$(DESTDIR)/usr/include -I$(DESTDIR)/usr/include/gstreamer-1.0 \
+			-I$(DESTDIR)/usr/include/clutter-1.0 -I$(RFSDIR)/usr/include \
+			-I$(RFSDIR)/usr/include/aarch64-linux-gnu" && \
+	 export LDFLAGS="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -L$(RFSDIR)/lib \
+			-B$(RFSDIR)/usr/lib/aarch64-linux-gnu \
+			-Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu \
+			-Wl,-rpath-link,$(RFSDIR)/lib" && \
 	 export GST_PLUGIN_SCANNER_1_0=$(GRAPHICSDIR)/clutter_gst/gst-plugin-scanner-dummy && \
 	 \
 	 ./autogen.sh --prefix=/usr --host=aarch64-linux-gnu && \
-	 ./configure CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" \
+	 ./configure CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
 	 	--host=aarch64-linux-gnu \
+		--with-libtool-sysroot=$(DESTDIR) \
 		--enable-introspection=no \
 		--disable-gtk-doc \
 		--disable-static \
-		--enable-nls \
 		--prefix=/usr && \
 	 $(MAKE) -j$(JOBS) && \
 	 $(MAKE) install && \
