@@ -19,14 +19,20 @@ imx_smart_fitness:
 	 fi && \
 	 sudo cp -rf $(DESTDIR)//usr/include/nnstreamer $(RFSDIR)//usr/include && \
 	 cd $(GPDIR)/imx_smart_fitness && \
-	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" && \
-	 export CXX="$(CROSS_COMPILE)g++ --sysroot=$(RFSDIR)" && \
+	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export CXX="$(CROSS_COMPILE)g++ --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
 	 export PKG_CONFIG_LIBDIR=$(RFSDIR)/usr/lib/aarch64-linux-gnu/pkgconfig && \
 	 export PKG_CONFIG_PATH=$(RFSDIR)/usr/share/pkgconfig && \
+	 rm -rf build_$(DISTROTYPE)_$(ARCH) && \
 	 mkdir -p build_$(DISTROTYPE)_$(ARCH) && \
 	 cmake  -S $(GPDIR)/imx_smart_fitness \
 		-B build_$(DISTROTYPE)_$(ARCH) \
-		-DCMAKE_CXX_FLAGS="-I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include" \
+		-DCMAKE_C_COMPILER_WORKS=TRUE \
+		-DCMAKE_CXX_COMPILER_WORKS=TRUE \
+		-DCMAKE_SYSROOT=$(RFSDIR) \
+		-DCMAKE_C_FLAGS="-I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu -I$(RFSDIR)/usr/include" \
+		-DCMAKE_CXX_FLAGS="-I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu -I$(RFSDIR)/usr/include" \
+		-DCMAKE_EXE_LINKER_FLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -B$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
 		-DLIBRARY_PATH=$(RFSDIR)/usr/lib/aarch64-linux-gnu \
 		-DCMAKE_BUILD_TYPE=release && \

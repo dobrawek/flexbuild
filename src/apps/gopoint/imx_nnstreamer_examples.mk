@@ -22,16 +22,22 @@ imx_nnstreamer_examples:
 	 if [ -d $(FBDIR)/patch/imx_nnstreamer_examples ] && [ ! -f .patchdone ]; then \
 	     git am $(FBDIR)/patch/imx_nnstreamer_examples/*.patch && touch .patchdone; \
 	 fi && \
-	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR)" && \
-	 export CXX="$(CROSS_COMPILE)g++ --sysroot=$(RFSDIR)" && \
-	 export CXXFLAGS="-I$(DESTDIR)/usr/include/ -L$(DESTDIR)/usr/lib -lgstreamer-1.0" && \
-	 export CFLAGS="-I$(DESTDIR)/usr/include/ -L$(DESTDIR)/usr/lib -lgstreamer-1.0" && \
+	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export CXX="$(CROSS_COMPILE)g++ --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export CXXFLAGS="-I$(DESTDIR)/usr/include/ -I$(RFSDIR)/usr/include/aarch64-linux-gnu -L$(DESTDIR)/usr/lib -lgstreamer-1.0" && \
+	 export CFLAGS="-I$(DESTDIR)/usr/include/ -I$(RFSDIR)/usr/include/aarch64-linux-gnu -L$(DESTDIR)/usr/lib -lgstreamer-1.0" && \
 	 export PKG_CONFIG_LIBDIR=$(RFSDIR)/usr/lib/aarch64-linux-gnu/pkgconfig && \
 	 export PKG_CONFIG_PATH=$(RFSDIR)/usr/share/pkgconfig:$(RFSDIR)/usr/lib/pkgconfig && \
 	 rm -rf build_$(DISTROTYPE)_$(ARCH) && \
 	 mkdir -p build_$(DISTROTYPE)_$(ARCH) && \
 	 cmake  -S $(GPDIR)/imx_nnstreamer_examples \
 		-B build_$(DISTROTYPE)_$(ARCH) \
+		-DCMAKE_C_COMPILER_WORKS=TRUE \
+		-DCMAKE_CXX_COMPILER_WORKS=TRUE \
+		-DCMAKE_SYSROOT=$(RFSDIR) \
+		-DCMAKE_C_FLAGS="-I$(RFSDIR)/usr/include/aarch64-linux-gnu -I$(RFSDIR)/usr/include" \
+		-DCMAKE_CXX_FLAGS="-I$(RFSDIR)/usr/include/aarch64-linux-gnu -I$(RFSDIR)/usr/include" \
+		-DCMAKE_EXE_LINKER_FLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -B$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
 		-DCMAKE_BUILD_TYPE=release && \
 	 cmake --build build_$(DISTROTYPE)_$(ARCH) -j$(JOBS) --target all && \
 	 cmake --install build_$(DISTROTYPE)_$(ARCH) --prefix /usr && \

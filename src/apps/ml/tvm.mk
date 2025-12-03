@@ -27,12 +27,33 @@ tvm:
 	 cd $(MLDIR)/tvm && \
 	 export CC="$(CROSS_COMPILE)gcc --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
 	 export CXX="$(CROSS_COMPILE)g++ --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 rm -rf build_$(DISTROTYPE)_$(ARCH) && \
 	 mkdir -p build_$(DISTROTYPE)_$(ARCH) && \
+	 echo 'set(CMAKE_SYSTEM_NAME Linux)' > toolchain-aarch64.cmake && \
+	 echo 'set(CMAKE_SYSTEM_PROCESSOR aarch64)' >> toolchain-aarch64.cmake && \
+	 echo 'set(CMAKE_C_COMPILER $(CROSS_COMPILE)gcc)' >> toolchain-aarch64.cmake && \
+	 echo 'set(CMAKE_CXX_COMPILER $(CROSS_COMPILE)g++)' >> toolchain-aarch64.cmake && \
+	 echo 'set(CMAKE_SYSROOT $(RFSDIR))' >> toolchain-aarch64.cmake && \
+	 echo 'set(CMAKE_FIND_ROOT_PATH $(RFSDIR))' >> toolchain-aarch64.cmake && \
+	 echo 'set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)' >> toolchain-aarch64.cmake && \
+	 echo 'set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)' >> toolchain-aarch64.cmake && \
+	 echo 'set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)' >> toolchain-aarch64.cmake && \
+	 echo 'set(CMAKE_FIND_ROOT_PATH_MODE_PACKAGE ONLY)' >> toolchain-aarch64.cmake && \
+	 echo 'set(CMAKE_C_FLAGS_INIT "-I$(RFSDIR)/usr/include/aarch64-linux-gnu -I$(RFSDIR)/usr/include")' >> toolchain-aarch64.cmake && \
+	 echo 'set(CMAKE_CXX_FLAGS_INIT "-I$(RFSDIR)/usr/include/aarch64-linux-gnu -I$(RFSDIR)/usr/include")' >> toolchain-aarch64.cmake && \
+	 echo 'set(CMAKE_EXE_LINKER_FLAGS_INIT "-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -B$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu")' >> toolchain-aarch64.cmake && \
+	 echo 'set(CMAKE_SHARED_LINKER_FLAGS_INIT "-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -B$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu")' >> toolchain-aarch64.cmake && \
+	 echo 'set(CMAKE_MODULE_LINKER_FLAGS_INIT "-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -B$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu")' >> toolchain-aarch64.cmake && \
 	 cmake  -S $(MLDIR)/tvm \
 		-B $(MLDIR)/tvm/build_$(DISTROTYPE)_$(ARCH) \
-		-DCMAKE_C_FLAGS="-I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
-		-DCMAKE_CXX_FLAGS="-I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
-		-DCMAKE_EXE_LINKER_FLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
+		-DCMAKE_TOOLCHAIN_FILE=$(MLDIR)/tvm/toolchain-aarch64.cmake \
+		-DCMAKE_CROSSCOMPILING=TRUE \
+		-DCMAKE_C_COMPILER_WORKS=TRUE \
+		-DCMAKE_CXX_COMPILER_WORKS=TRUE \
+		-DCMAKE_SYSROOT=$(RFSDIR) \
+		-DCMAKE_C_FLAGS="-I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu -I$(RFSDIR)/usr/include" \
+		-DCMAKE_CXX_FLAGS="-I$(DESTDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu -I$(RFSDIR)/usr/include" \
+		-DCMAKE_EXE_LINKER_FLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -B$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
 		-DCMAKE_STRIP=strip \
 		-DUSE_VSI_NPU=ON \
 		-DUSE_VSI_NPU_RUNTIME=ON && \
