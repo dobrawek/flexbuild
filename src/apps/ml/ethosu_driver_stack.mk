@@ -32,12 +32,4 @@ ethosu_driver_stack:
 		-DCMAKE_EXE_LINKER_FLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -L$(RFSDIR)/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/lib/aarch64-linux-gnu $(RFSDIR)/usr/lib/aarch64-linux-gnu/libstdc++.so.6" && \
 	 $(MAKE) -j$(JOBS) -C build_$(DISTROTYPE)_$(ARCH) && \
 	 cmake --install build_$(DISTROTYPE)_$(ARCH) --prefix /usr --strip && \
-	 NO_FETCH_BUILD=1 \
-	 STAGING_INCDIR=$(RFSDIR)/usr/include \
-	 STAGING_LIBDIR=$(RFSDIR)/usr/lib \
-	 python3 setup.py bdist_wheel --verbose --dist-dir build_$(DISTROTYPE)_$(ARCH)/dist build_ext \
-		 --library-dirs build_$(DISTROTYPE)_$(ARCH)/driver_library && \
-	 mkdir -p $(DESTDIR)/$(PYTHON_SITEPACKAGES_DIR)/ethosu && \
-	 cp build/lib.linux-*-cpython*/ethosu/interpreter.cpython-*-linux-gnu.so $(DESTDIR)/$(PYTHON_SITEPACKAGES_DIR)/ethosu && \
-	 rename "s/x86_64/aarch64/" $(DESTDIR)/$(PYTHON_SITEPACKAGES_DIR)/ethosu/*.so && \
 	 $(call fbprint_d,"ethosu_driver_stack")

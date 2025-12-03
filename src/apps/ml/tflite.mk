@@ -28,15 +28,19 @@ tflite:
 	 export CXX="$(CROSS_COMPILE)g++ --sysroot=$(RFSDIR) -B$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
 	 export CFLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" && \
 	 export CXXFLAGS="-I$(RFSDIR)/usr/include -I$(RFSDIR)/usr/include/aarch64-linux-gnu" && \
-	 export LDFLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" && \
+	 export LDFLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu $(RFSDIR)/usr/lib/aarch64-linux-gnu/libstdc++.so.6" && \
+	 rm -rf build_$(DISTROTYPE)_$(ARCH) && \
 	 mkdir -p build_$(DISTROTYPE)_$(ARCH) && \
 	 cmake  -S tensorflow/lite \
 		-B build_$(DISTROTYPE)_$(ARCH) \
+		-DCMAKE_C_COMPILER_WORKS=TRUE \
+		-DCMAKE_CXX_COMPILER_WORKS=TRUE \
 		-DCMAKE_BUILD_TYPE=release \
 		-DCMAKE_SYSTEM_NAME=Linux \
 		-DCMAKE_SYSTEM_PROCESSOR=aarch64 \
 		-DCMAKE_C_FLAGS="-I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
 		-DCMAKE_CXX_FLAGS="-I$(RFSDIR)/usr/include/aarch64-linux-gnu" \
+		-DCMAKE_EXE_LINKER_FLAGS="-L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu $(RFSDIR)/usr/lib/aarch64-linux-gnu/libstdc++.so.6" \
 		-DTFLITE_HOST_TOOLS_DIR=/usr/bin \
 		-DFETCHCONTENT_FULLY_DISCONNECTED=OFF \
 		-DTFLITE_EVAL_TOOLS=on \
@@ -45,12 +49,10 @@ tflite:
 		-DTFLITE_ENABLE_NNAPI_VERBOSE_VALIDATION=on \
 		-DTFLITE_ENABLE_RUY=on \
 		-DTFLITE_ENABLE_XNNPACK=on \
-		-DTFLITE_PYTHON_WRAPPER_BUILD_CMAKE2=on \
+		-DTFLITE_PYTHON_WRAPPER_BUILD_CMAKE2=off \
 		-DTFLITE_ENABLE_EXTERNAL_DELEGATE=on && \
 	 VERBOSE=0 cmake --build build_$(DISTROTYPE)_$(ARCH) -j$(JOBS) --target all -- benchmark_model label_image && \
 	 cd build_$(DISTROTYPE)_$(ARCH) && \
-	 CI_BUILD_PYTHON=python3 BUILD_NUM_JOBS=$(JOBS) \
-	 $(MLDIR)/tflite/tensorflow/lite/tools/pip_package/build_pip_package_with_cmake2.sh aarch64 && \
 	 $(CROSS_COMPILE)strip libtensorflow-lite.so* && \
 	 cp -Pf libtensorflow-lite.so* $(DESTDIR)/usr/lib && \
 	 install -d $(DESTDIR)/usr/include/tensorflow/lite && \
@@ -79,11 +81,8 @@ tflite:
 	 cp $(MLDIR)/tflite/tensorflow/lite/examples/label_image/testdata/grace_hopper.bmp $(DESTDIR)/usr/bin/$(TFLITE_VERSION)/examples && \
 	 cp $(MLDIR)/tflite/tensorflow/lite/java/ovic/src/testdata/labels.txt $(DESTDIR)/usr/bin/$(TFLITE_VERSION)/examples && \
 	 \
-	 $(call fbprint_n,"install mobilenet tflite file python example and pip package") && \
+	 $(call fbprint_n,"install mobilenet tflite file python example") && \
 	 cp $(MLDIR)/tflite/mobilenet_*.tflite $(DESTDIR)/usr/bin/$(TFLITE_VERSION)/examples && \
 	 cp $(MLDIR)/tflite/tensorflow/lite/examples/python/label_image.py $(DESTDIR)/usr/bin/$(TFLITE_VERSION)/examples && \
-	 pip3 install --ignore-installed --disable-pip-version-check -vvv --platform linux_aarch64 -t $(DESTDIR)/usr/lib/python3.11/site-packages \
-		--no-cache-dir --no-deps $(MLDIR)/tflite/build_$(DISTROTYPE)_$(ARCH)/tflite_pip/dist/tflite_runtime-*.whl && \
-	 #rm -rf $(DESTDIR)/usr/include/tensorflow/lite/{interpreter.h,util.h} && \
 	 touch .builddone && \
 	 $(call fbprint_d,"tflite")

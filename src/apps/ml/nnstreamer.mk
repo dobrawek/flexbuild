@@ -56,7 +56,7 @@ nnstreamer:
 			    -I$(MLDIR)/tflite/tensorflow/lite/toco \
 			    -I$(MLDIR)/nnstreamer/third_party/xla/third_party/tsl" \
 		-Dc_link_args="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
-		-Dcpp_link_args="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu" \
+		-Dcpp_link_args="-L$(DESTDIR)/usr/lib -L$(RFSDIR)/usr/lib/aarch64-linux-gnu -Wl,-rpath-link,$(RFSDIR)/usr/lib/aarch64-linux-gnu $(RFSDIR)/usr/lib/aarch64-linux-gnu/libstdc++.so.6" \
 		-Denable-float16=true \
 		-Denable-test=true \
 		-Dinstall-test=true \
@@ -72,6 +72,6 @@ nnstreamer:
 	 protoc --cpp_out=$(MLDIR)/tflite/tensorflow/lite/toco/ --proto_path=$(MLDIR)/tflite/ $(MLDIR)/tflite/tensorflow/lite/toco/model_flags.proto && \
 	 protoc --cpp_out=$(MLDIR)/tflite/tensorflow/lite/toco/ --proto_path=$(MLDIR)/tflite/ $(MLDIR)/tflite/tensorflow/lite/toco/types.proto && \
 	 protoc --cpp_out=. --proto_path=$(MLDIR)/tflite/ $(MLDIR)/tflite/third_party/xla/third_party/tsl/tsl/protobuf/error_codes.proto && \
-	 mkdir -p $(RFSDIR)/usr/local/include/nnstreamer && \
+	 sudo mkdir -p $(RFSDIR)/usr/local/include/nnstreamer && \
 	 ninja -j $(JOBS) -C build_$(DISTROTYPE)_$(ARCH) install && \
 	 $(call fbprint_d,"nnstreamer")
