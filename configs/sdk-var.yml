@@ -41,7 +41,7 @@ FORCE_BUILD_IN_DOCKER: n
 # Supported versions: 11.3.rel1, 12.2.rel1, 12.3.rel1, 13.2.rel1, 13.3.rel1
 # NXP officially supports GCC 11.x, 12.x, 13.x - use 13.3.rel1 for best compatibility
 USE_LOCAL_TOOLCHAIN: y
-TOOLCHAIN_VERSION: "13.3.rel1"
+TOOLCHAIN_VERSION: "12.3.rel1"
 TOOLCHAIN_DIR: $FBDIR/toolchain
 
 # choose one of the 3 ways to fetch/update repo for various use cases

@@ -16,6 +16,24 @@ COMPONENTS=""
 DISTRO=""
 SDK_CONFIG_FILE="sdk-var.yml"
 SKIP_TOOLCHAIN_CHECK=false
+ENABLE_LOGGING=true
+
+# Setup logging
+setup_logging() {
+    if [ "$ENABLE_LOGGING" = true ]; then
+        LOG_DIR="$FBDIR/build_lsdk2412/logs"
+        mkdir -p "$LOG_DIR"
+        LOG_FILE="$LOG_DIR/build_$(date +%Y%m%d_%H%M%S).log"
+
+        # Redirect stdout and stderr to both console and log file
+        exec > >(tee -a "$LOG_FILE") 2>&1
+
+        echo "=================================================================="
+        echo "Build started at: $(date)"
+        echo "Log file: $LOG_FILE"
+        echo "=================================================================="
+    fi
+}
 
 # Colors
 RED='\e[1;31m'
@@ -276,6 +294,7 @@ Options:
   --cleanall     Clean all build environments (preserves toolchain)
   --config FILE  Specify config file (default: sdk-var.yml)
   --skip-tc      Skip toolchain check (use system toolchain)
+  --no-log       Disable logging to file (default: logs to build_lsdk2412/logs/)
   -h, --help     Show this help message
 
 Supported machines:
@@ -335,6 +354,10 @@ parse_arguments() {
                 SKIP_TOOLCHAIN_CHECK=true
                 shift
                 ;;
+            --no-log)
+                ENABLE_LOGGING=false
+                shift
+                ;;
             -h|--help)
                 show_usage
                 exit 0
@@ -367,6 +390,9 @@ main() {
     cd "$FBDIR"
 
     parse_arguments "$@"
+
+    # Setup logging (after parsing args to respect --no-log)
+    setup_logging
 
     # Handle cleanall first (doesn't need machine/distro)
     if [ "$CLEANALL_MODE" = true ]; then
